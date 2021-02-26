@@ -1,16 +1,10 @@
-FROM alpine:3.9.3
-LABEL maintainer "Ali mahammad.ali01@sap.com"
-RUN apk --no-cache add \
-        ca-certificates \
-        curl
-# Install SAP global certificates
-ADD http://aia.pki.co.sap.com/aia/SAP%20Global%20Root%20CA.crt /usr/local/share/ca-certificates/SAP_Global_Root_CA.crt
-RUN update-ca-certificates
+FROM alpine
 
-RUN mkdir cf-cli
-WORKDIR /cf-cli
+WORKDIR /resources
 
-# Download latest CF CLI
+RUN apk update && apk add curl
 RUN curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&source=github" | tar -zx
+RUN mv cf /usr/local/bin
+RUN cf install-plugin -f -r CF-Community "html5-plugin"
 
-RUN cf --version
+ENTRYPOINT [ "/bin/sh" ]
